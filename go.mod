@@ -1,4 +1,4 @@
-module github.com/caminerinc/dgraph-backup
+module github.com/AugustDev/dgraph-backup-cli
 
 go 1.12
 
