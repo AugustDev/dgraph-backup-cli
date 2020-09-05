@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -51,7 +52,10 @@ func requestExport(c *cli.Context) (success bool) {
 	var requestUri = c.String(DgraphHost) + "/admin/export?format=" + c.String(Format)
 	yellow := color.New(color.FgYellow).SprintFunc()
 	fmt.Printf("Requesting Export from %s \n", yellow(requestUri))
-	req, _ := http.NewRequest("GET", requestUri, nil)
+	req, err := http.NewRequest("GET", requestUri, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -120,9 +124,12 @@ func shipIt(c *cli.Context, filename string) error {
 
 func cleanUp(c *cli.Context, filePath string) {
 	err := os.Remove(filePath)
+	if err != nil {
+		fmt.Println("remove error.", err)
+	}
 	err = os.RemoveAll(c.String(ExportPath))
 	if err != nil {
-		fmt.Println("Error while deleting side effects.", err)
+		fmt.Println("remove all error.", err)
 	}
 }
 
@@ -271,6 +278,25 @@ func Restore(c *cli.Context) {
 }
 
 func main() {
+
+	ifaces, err := net.Interfaces()
+	// handle err
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+		// handle err
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			// process IP address
+			fmt.Println(ip)
+		}
+	}
+
 	app := cli.NewApp()
 	app.Name = "dgraph-backup"
 	Flags := []cli.Flag{
@@ -366,7 +392,7 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
+	err = app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
