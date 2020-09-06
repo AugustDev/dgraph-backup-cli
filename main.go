@@ -206,6 +206,7 @@ func getBackUpFile(sess *session.Session, c *cli.Context) (key string) {
 }
 
 func DownloadFile(c *cli.Context, sess *session.Session, fileName string) (filepath string) {
+	fmt.Println("am.1.1")
 	downloader := s3manager.NewDownloader(sess)
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -222,7 +223,8 @@ func DownloadFile(c *cli.Context, sess *session.Session, fileName string) (filep
 	}
 	fmt.Println("Downloaded", file.Name(), numBytes, "bytes")
 	err = archiver.Unarchive("./"+file.Name(), "data")
-	return "./data/exports/"
+	returnPath := "./data/exports/"
+	return returnPath
 }
 
 func getFiles(locPath string) (rdfFiles []string, schemaFiles []string, err error) {
