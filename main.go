@@ -12,7 +12,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
@@ -179,9 +178,9 @@ func getBackUpFile(sess *session.Session, c *cli.Context) (key string) {
 	}
 
 	// sorting by key (newest will appear first)
-	sort.Slice(resp.Contents, func(i, j int) bool {
-		return *resp.Contents[i].Key > *resp.Contents[j].Key
-	})
+	// sort.Slice(resp.Contents, func(i, j int) bool {
+	// 	return *resp.Contents[i].Key > *resp.Contents[j].Key
+	// })
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
@@ -223,7 +222,7 @@ func DownloadFile(c *cli.Context, sess *session.Session, fileName string) (filep
 	}
 	fmt.Println("Downloaded", file.Name(), numBytes, "bytes")
 	err = archiver.Unarchive("./"+file.Name(), "data")
-	return "./data/export/"
+	return "./data/exports/"
 }
 
 func getFiles(locPath string) (rdfFiles []string, schemaFiles []string, err error) {
